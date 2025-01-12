@@ -1,0 +1,6 @@
+# Build results
+bin/
+obj/
+
+# Project files
+Blasterify.Models.csproj.user

@@ -1,0 +1,197 @@
+﻿@model Blasterify.Models.Yuno.YunoCredentials
+@{
+    ViewBag.Title = "RentConfirmation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.AntiForgeryToken()
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDK Integration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Roboto&display=swap"
+          rel="stylesheet" />
+</head>
+
+<body>
+    <div class="container m-auto col-8">
+        <div id="root"></div>
+        <div id="rootElement"></div>
+        <div id="paypal"></div>
+        <div id="paga-con-rappi"></div>
+        <div id="form-element"></div>
+
+        <div class="col-6 mx-auto">
+            <button id="button-pay"
+                    style="width: 100%; background-color: #FFC107; border: none; color: black; border-radius: 10px; padding: 15px; margin-top: 25px; font-weight: 600;">
+                Buy now
+            </button>
+        </div>
+    </div>
+
+    <script src="https://sdk-web.y.uno/v1/static/js/main.min.js"></script>
+
+    <script>
+        const yuno = Yuno.initialize('@Model.PublicAPIKey');
+        var checkoutSession = '@Model.CheckoutSession';
+
+        console.log('startCheckout');
+        yuno.startCheckout({
+            checkoutSession,
+            elementSelector: '#root',
+            countryCode: 'US',
+            language: 'es',
+            showLoading: true,
+            keepLoader: true,
+            issuersFormEnable: true,
+            onLoading: (args) => {
+                console.log('onLoading');
+                console.log(args);
+            },
+            renderMode: {
+                type: 'modal',
+                elementSelector: '#rootElement',
+            },
+            card: {
+                type: "extends",
+                styles: '',
+                cardSaveEnable: true,
+                texts: {}
+            },
+            texts: {},
+            externalPaymentButtons: {
+                paypal: {
+                    elementSelector: '#paypal',
+                },
+                pagaConRappi: {
+                    elementSelector: '#paga-con-rappi',
+                },
+            },
+            async yunoCreatePayment(oneTimeToken) {
+                console.log('yunoCreatePayment: ', oneTimeToken);
+                jQuery.ajax({
+                    url: '@Url.Action("PayNowRequest", "Shop")',
+                    type: 'POST',
+                    data: JSON.stringify({ token: oneTimeToken }),
+                    datatype: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        console.log(response);
+                        if (response.Success) {
+                            window.location.href = response.Data.Url;
+                        }
+                        else {
+                            swal('', 'Error', 'warning');
+                        }
+                    },
+                });
+            },
+            yunoPaymentMethodSelected(data) {
+                console.log('onPaymentMethodSelected', data);
+                //window?.parent?.modDb('onPaymentMethodSelected', data);
+            },
+            yunoPaymentResult(data) {
+                console.log('yunoPaymentResult', data);
+                //window?.parent?.modDb('yunoPaymentResult', data);
+                yuno.hideLoader();
+            },
+            yunoError: (error) => {
+                console.log('There was an error', error);
+                yuno.hideLoader();
+            },
+        });
+
+        console.log('mountCheckout');
+        yuno.mountCheckout();
+
+        const PayButton = document.querySelector('#button-pay');
+
+        PayButton.addEventListener('click', () => {
+            console.log('start Payment');
+            yuno.startPayment();
+        })
+    </script>
+</body>
+</html>
+
+@section scripts{
+    <script>
+        console.log('Scripts');
+
+        $(document).ready(function () {
+            ShowCartCount(0);
+        });
+
+        //PAY NOW
+        $(document).on('click', '#button-pay2222', function ()
+        {
+            /*
+            var pay = {
+                expirationDate: $('#inputExpirationDate').val(),
+                cvv: $('#inputCVV').val(),
+                cardholderName: $('#inputCardholderName').val()
+            };
+
+            if (pay.expirationDate == null || pay.expirationDate == '') {
+                swal('', 'You must enter a expiration date', 'warning');
+                return;
+            }
+            else if (pay.cvv == null || pay.cvv == '') {
+                swal('', 'You must enter your CVV', 'warning');
+                return;
+            }
+            else if (pay.cvv.length != 3) {
+                swal('', 'Invalid CVV', 'warning');
+                return;
+            }
+            else if (pay.cardholderName == null || pay.cardholderName == '') {
+                swal('', 'You must enter your cardholder name', 'warning');
+                return;
+            }
+            */
+            jQuery.ajax({
+                url: '@Url.Action("PayNowRequest", "Shop")',
+                type: 'POST',
+                data: JSON.stringify({ token: '123sfgs' }),
+                datatype: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    console.log(response);
+                    if (response.Success) {
+                        window.location.href = response.Data.Url;
+                    }
+                    else {
+                        swal('', 'Error', 'warning');
+                    }
+                },
+            });
+        });
+
+        //CANCEL
+        $(document).on('click', '#calcel', function ()
+        {
+            jQuery.ajax({
+                url: '@Url.Action("CancelRentConfirmationRequest", "Shop")',
+                type: 'POST',
+                datatype: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    console.log(response);
+                    if (response.Success) {
+                        window.location.href = response.Data.Url;
+                    }
+                    else {
+                        swal('', 'Error', 'warning');
+                        if (response) {
+                            window.location.href = response.Data.Url;
+                        }
+                    }
+                },
+            });
+        });
+
+    </script>
+}

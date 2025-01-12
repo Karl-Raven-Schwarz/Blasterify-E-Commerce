@@ -1,0 +1,16 @@
+# Build results
+bin/
+obj/
+
+# Auto-generated files
+App_Data/
+App_Start/
+Properties/
+
+# Project files
+Blasterify.Client.csproj.user
+
+# Web configuration files
+Web.config
+Web.Debug.config
+Web.Release.config

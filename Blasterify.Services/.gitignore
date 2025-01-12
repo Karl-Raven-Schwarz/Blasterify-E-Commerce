@@ -1,0 +1,14 @@
+# Build results
+bin/
+obj/
+
+# Auto-generated files
+.config/
+Properties/
+
+# App settings files
+appsettings.Development.json
+appsettings.json
+
+# Project files
+Blasterify.Services.csproj.user
