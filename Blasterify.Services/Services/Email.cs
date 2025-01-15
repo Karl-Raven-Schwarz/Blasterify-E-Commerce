@@ -33,7 +33,7 @@ namespace Blasterify.Services.Services
             smtp.Send(message);
         }
 
-        public static void FinishRent(string toEmail, string displayName, string rentId, List<Models.RentItem> rentItems, List<string> titleMovies)
+        public static void FinishRent(string toEmail, string displayName, string rentId, List<Models.OrderItem> rentItems, List<string> titleMovies)
         {
             var fromAddress = new MailAddress("daoblur.business@gmail.com", "Blasterify.MVC");
             var toAddress = new MailAddress(toEmail, displayName);
@@ -51,12 +51,12 @@ namespace Blasterify.Services.Services
             htmlContent += "<img src='https://firebasestorage.googleapis.com/v0/b/blasterify.appspot.com/o/multimedia%2Fwelcome%2Flogo.png?alt=media&token=0b9919f3-6e25-4016-882c-55594e8747fd' alt='Blasterify Logo' style='max-width: 300px; margin-bottom: 10px;' >";
             htmlContent += "</div>";
 
-            htmlContent += $"<p style='margin: 0;'>Rent-{ rentId }</p>";
+            htmlContent += $"<p style='margin: 0;'>Rent-{rentId}</p>";
             htmlContent += "<div style='text-align: center; margin-bottom: 20px;'><h1>Rent Detail</h1></div>";
 
             htmlContent += "<h3>Client Details:</h3>";
-            htmlContent += $"<p>Name: { displayName }</p>";
-            htmlContent += $"<p>Email: { toEmail }</p>";
+            htmlContent += $"<p>Name: {displayName}</p>";
+            htmlContent += $"<p>Email: {toEmail}</p>";
 
             htmlContent += "<table style='width: 100%; border-collapse: collapse;'>";
             htmlContent += "<thead><tr>";
@@ -66,20 +66,20 @@ namespace Blasterify.Services.Services
 
             htmlContent += "<tbody>";
 
-            for(int i = 0; i < rentItems.Count; i++)
+            for (int i = 0; i < rentItems.Count; i++)
             {
-                totalCost += rentItems[i].Price * rentItems[i].RentDuration;
+                totalCost += rentItems[i].Price;
                 htmlContent += "<tr>";
-                htmlContent += $"<td style='padding: 8px; text-align: left; border-bottom: 1px solid #ddd;'>{ titleMovies[i] }</td>";
-                htmlContent += $"<td style='padding: 8px; text-align: left; border-bottom: 1px solid #ddd;'>${ rentItems[i].Price * rentItems[i].RentDuration }</td>";
+                htmlContent += $"<td style='padding: 8px; text-align: left; border-bottom: 1px solid #ddd;'>{titleMovies[i]}</td>";
+                htmlContent += $"<td style='padding: 8px; text-align: left; border-bottom: 1px solid #ddd;'>${rentItems[i].Price}</td>";
                 htmlContent += "</tr>";
             }
             htmlContent += "</tbody>";
 
             htmlContent += "<tfoot><tr>";
             htmlContent += $"<td style='padding: 8px; text-align: right; font-weight: bold;'>Total Cost:</td>";
-            htmlContent += $"<td style='padding: 8px; text-align: left; border-top: 1px solid #ddd;'>${ totalCost }</td>";
-            
+            htmlContent += $"<td style='padding: 8px; text-align: left; border-top: 1px solid #ddd;'>${totalCost}</td>";
+
             htmlContent += $"</tr></tfoot>";
             htmlContent += $"</table></div>";
 

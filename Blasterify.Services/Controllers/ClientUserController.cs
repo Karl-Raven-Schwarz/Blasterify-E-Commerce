@@ -1,4 +1,5 @@
-﻿using Blasterify.Services.Data;
+﻿using Blasterify.Models.Requests;
+using Blasterify.Services.Data;
 using Blasterify.Services.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,11 +26,8 @@ namespace Blasterify.Services.Controllers
             {
                 FirstName = clientUserModel.FirstName,
                 LastName = clientUserModel.LastName,
-                CardNumber = clientUserModel.CardNumber,
                 Email = clientUserModel.Email,
                 PasswordHash = clientUserModel.PasswordHash,
-                SubscriptionDate = clientUserModel.SubscriptionDate,
-                SubscriptionId = clientUserModel.SubscriptionId,
                 MerchantOrderId = string.Empty
             });
 
@@ -83,11 +81,11 @@ namespace Blasterify.Services.Controllers
 
         [HttpPost]
         [Route("LogIn")]
-        public async Task<ActionResult<ClientUser>> LogIn(LogIn logIn)
+        public async Task<ActionResult<ClientUser>> LogIn(LogInRequest logInRequest)
         {
             try
             {
-                var clientUser = await _context!.ClientUsers!.FirstOrDefaultAsync(cu => cu.Email == logIn.Email);
+                var clientUser = await _context!.ClientUsers!.FirstOrDefaultAsync(cu => cu.Email == logInRequest.Email);
 
                 if (clientUser == null)
                 {
@@ -97,7 +95,7 @@ namespace Blasterify.Services.Controllers
                 {
                     using (SHA256 sha256Hash = SHA256.Create())
                     {
-                        byte[] bytes = logIn.PasswordHash!;
+                        byte[] bytes = logInRequest.PasswordHash!;
                         for (int i = 0; i < bytes.Length; i++)
                         {
                             if (bytes[i] != clientUser.PasswordHash![i])
@@ -112,10 +110,7 @@ namespace Blasterify.Services.Controllers
                         Id = clientUser.Id,
                         FirstName = clientUser.FirstName,
                         LastName = clientUser.LastName,
-                        CardNumber = clientUser.CardNumber,
                         Email = clientUser.Email,
-                        SubscriptionDate = clientUser.SubscriptionDate,
-                        SubscriptionId = clientUser.SubscriptionId,
                         IsConnected = true,
                         LastConnectionDate = DateTime.UtcNow
 
@@ -141,12 +136,9 @@ namespace Blasterify.Services.Controllers
 
             getClientUser!.FirstName = clientUser.FirstName;
             getClientUser!.LastName = clientUser.LastName;
-            getClientUser!.CardNumber = clientUser.CardNumber;
             getClientUser!.IsConnected = clientUser.IsConnected;
             getClientUser!.Email = clientUser.Email;
             getClientUser!.PasswordHash = clientUser.PasswordHash;
-            getClientUser!.SubscriptionDate = clientUser.SubscriptionDate;
-            getClientUser!.SubscriptionId = clientUser.SubscriptionId;
 
             await _context.SaveChangesAsync();
 

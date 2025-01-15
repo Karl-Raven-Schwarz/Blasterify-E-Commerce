@@ -35,7 +35,11 @@ namespace Blasterify.Services.Models
 
         [Required]
         [Column(TypeName = "decimal(4, 2)")]
-        public double Price { get; set; }
+        public double PurchasePrice { get; set; }
+
+        [Required]
+        [Column(TypeName = "decimal(4, 2)")]
+        public double RentalPrice { get; set; }
 
         [Required]
         public bool IsFree { get; set; }

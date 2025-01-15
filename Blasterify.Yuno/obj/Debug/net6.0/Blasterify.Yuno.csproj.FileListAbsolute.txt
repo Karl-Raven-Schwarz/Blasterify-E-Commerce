@@ -1,0 +1,12 @@
+E:\Software Projects\Blasterify-E-Commerce\Blasterify.Yuno\bin\Debug\net6.0\Blasterify.Yuno.deps.json
+E:\Software Projects\Blasterify-E-Commerce\Blasterify.Yuno\bin\Debug\net6.0\Blasterify.Yuno.dll
+E:\Software Projects\Blasterify-E-Commerce\Blasterify.Yuno\bin\Debug\net6.0\Blasterify.Yuno.pdb
+E:\Software Projects\Blasterify-E-Commerce\Blasterify.Yuno\obj\Debug\net6.0\Blasterify.Yuno.GeneratedMSBuildEditorConfig.editorconfig
+E:\Software Projects\Blasterify-E-Commerce\Blasterify.Yuno\obj\Debug\net6.0\Blasterify.Yuno.AssemblyInfoInputs.cache
+E:\Software Projects\Blasterify-E-Commerce\Blasterify.Yuno\obj\Debug\net6.0\Blasterify.Yuno.AssemblyInfo.cs
+E:\Software Projects\Blasterify-E-Commerce\Blasterify.Yuno\obj\Debug\net6.0\Blasterify.Yuno.csproj.CoreCompileInputs.cache
+E:\Software Projects\Blasterify-E-Commerce\Blasterify.Yuno\obj\Debug\net6.0\Blasterify.Yuno.sourcelink.json
+E:\Software Projects\Blasterify-E-Commerce\Blasterify.Yuno\obj\Debug\net6.0\Blasterify.Yuno.dll
+E:\Software Projects\Blasterify-E-Commerce\Blasterify.Yuno\obj\Debug\net6.0\refint\Blasterify.Yuno.dll
+E:\Software Projects\Blasterify-E-Commerce\Blasterify.Yuno\obj\Debug\net6.0\Blasterify.Yuno.pdb
+E:\Software Projects\Blasterify-E-Commerce\Blasterify.Yuno\obj\Debug\net6.0\ref\Blasterify.Yuno.dll

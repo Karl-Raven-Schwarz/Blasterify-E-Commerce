@@ -65,22 +65,23 @@ namespace Blasterify.Services.Controllers
 
                 //--------------------------------------------
 
-                var rent = new Rent()
+                var rent = new Order()
                 {
                     Id = id,
-                    Date = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow,
                     Name = preRent.Name,
                     Address = preRent.Address,
-                    CardNumber = preRent.CardNumber,
+                    //CardNumber = preRent.CardNumber,
                     IsEnabled = true, //For Cart
-                    ClientUserId = preRent.ClientUserId,
-                    StatusId = 2, //Pending
+                    //ClientUserId = preRent.ClientUserId,
+                    //StatusId = 2, //Pending
                     CheckoutSession = checkoutSession!.Checkout_Session
                 };
-                await _context.Rents!.AddAsync(rent);
+                //await _context.Rents!.AddAsync(rent);
 
                 foreach (var item in preRent.PreRentItems!)
                 {
+                    /*
                     await _context.RentItems!.AddAsync(new RentItem()
                     {
                         Id = 0,
@@ -89,6 +90,7 @@ namespace Blasterify.Services.Controllers
                         RentId = id,
                         MovieId = item.MovieId
                     });
+                    */
                 }
 
                 yunoCredentials.RentId = id;
@@ -131,22 +133,23 @@ namespace Blasterify.Services.Controllers
                 //--------------------------------------------
 
                 id = preRent.Id;
-                var rent = await _context!.Rents!.FindAsync(id);
+                var rent = await _context!.Orders!.FindAsync(id);
 
-                rent!.Date = DateTime.UtcNow;
+                rent!.CreatedAt = DateTime.UtcNow;
                 rent!.Name = preRent.Name;
                 rent!.Address = preRent.Address;
-                rent!.CardNumber = preRent.CardNumber;
+                //rent!.CardNumber = preRent.CardNumber;
                 rent!.IsEnabled = true; //For Cart
-                rent!.StatusId = 2; //Pending
+                //rent!.StatusId = 2; //Pending
                 rent!.CheckoutSession = checkoutSession!.Checkout_Session;
 
                 //await _context.SaveChangesAsync();
 
-                var rentItems = await _context!.RentItems!.Where(pr => pr.RentId == preRent.Id).ToListAsync();
+                var rentItems = await _context!.OrderItems!.Where(pr => pr.OrderId == preRent.Id).ToListAsync();
 
                 foreach (var item in preRent.PreRentItems!)
                 {
+                    /*
                     var rentItem = rentItems.Find(ri => ri.Id == item.Id);
 
                     if (rentItem == null)
@@ -163,17 +166,18 @@ namespace Blasterify.Services.Controllers
                     else
                     {
                         rentItem.Price = item.Price;
-                        rentItem.RentDuration = item.RentDuration;
+                        //rentItem.RentDuration = item.RentDuration;
 
                         rentItems.Remove(rentItem);
 
                         await _context.SaveChangesAsync();
                     }
+                */
                 }
 
                 foreach (var item in rentItems)
                 {
-                    _context.RentItems!.Remove(item);
+                    _context.OrderItems!.Remove(item);
                 }
 
                 yunoCredentials.RentId = id;
@@ -188,11 +192,11 @@ namespace Blasterify.Services.Controllers
 
         [HttpPost]
         [Route("CreateRentItems")]
-        public async Task<IActionResult> CreateRentItems(List<RentItem> rentItems)
+        public async Task<IActionResult> CreateRentItems(List<OrderItem> rentItems)
         {
             for (int i = 0; i < rentItems.Count; i++)
             {
-                await _context!.RentItems!.AddAsync(rentItems[i]);
+                //await _context!.RentItems!.AddAsync(rentItems[i]);
             }
 
             await _context.SaveChangesAsync();
@@ -201,17 +205,18 @@ namespace Blasterify.Services.Controllers
 
         [HttpGet]
         [Route("GetAllRentsClientUser")]
-        public async Task<ActionResult<IEnumerable<Rent>>> GetAllRentsClientUser(int clientUserId)
+        public async Task<ActionResult> GetAllRentsClientUser(int clientUserId)
         {
-            var rents = await _context!.Rents!.Where(r => r.ClientUserId == clientUserId).ToListAsync();
-            return Ok(rents);
+            //var rents = await _context!.Orders!.Where(r => r.ClientUserId == clientUserId).ToListAsync();
+            //return Ok(rents);
+            return Ok();
         }
 
         [HttpGet]
         [Route("GetAll")]
-        public async Task<ActionResult<IEnumerable<Rent>>> GetAll()
+        public async Task<ActionResult<IEnumerable<Order>>> GetAll()
         {
-            var rents = await _context!.Rents!.ToListAsync();
+            var rents = await _context!.Orders!.ToListAsync();
             return Ok(rents);
         }
 
@@ -219,7 +224,7 @@ namespace Blasterify.Services.Controllers
         [Route("Get")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var rent = await _context!.Rents!.FindAsync(id);
+            var rent = await _context!.Orders!.FindAsync(id);
 
             if (rent == null)
             {
@@ -233,18 +238,18 @@ namespace Blasterify.Services.Controllers
         [Route("GetRentDetail")]
         public async Task<IActionResult> GetRentDetail(Guid rentId)
         {
-            var rent = await _context.Rents!.FindAsync(rentId);
+            var rent = await _context.Orders!.FindAsync(rentId);
 
-            var rentItems = await _context.RentItems!.Where(ri => ri.RentId == rentId).ToListAsync();
+            var rentItems = await _context.OrderItems!.Where(ri => ri.OrderId == rentId).ToListAsync();
 
             var rentDetail = new Blasterify.Models.Model.RentDetailModel()
             {
                 Id = rentId,
-                Date = rent!.Date,
+                Date = rent!.CreatedAt,
                 Name = rent.Name,
                 Address = rent.Address,
-                CardNumber = rent.CardNumber,
-                RentItemDetailModels = new List<Blasterify.Models.Model.RentItemDetailModel>(rentItems.Count)
+                //CardNumber = rent.CardNumber,
+                //RentItemDetailModels = new List<Blasterify.Models.Model.RentItemDetailModel>(rentItems.Count)
             };
 
             foreach (var item in rentItems)
@@ -252,9 +257,9 @@ namespace Blasterify.Services.Controllers
                 var movie = await _context.Movies!.FindAsync(item.MovieId);
                 rentDetail.RentItemDetailModels.Add(new Blasterify.Models.Model.RentItemDetailModel()
                 {
-                    MovieId = item.MovieId,
-                    RentDuration = item.RentDuration,
-                    Title = movie!.Title,
+                    //MovieId = item.MovieId,
+                    //RentDuration = item.RentDuration,
+                    Title = movie!.Name,
                     Duration = movie.Duration,
                     Description = movie.Description,
                     FirebasePosterId = movie.FirebasePosterId,
@@ -333,10 +338,10 @@ namespace Blasterify.Services.Controllers
 
         [HttpPut]
         [Route("Update")]
-        public async Task<IActionResult> Update(Guid id, Rent rent)
+        public async Task<IActionResult> Update(Guid id, Order rent)
         {
-            var getRent = await _context!.Rents!.FindAsync(id);
-            getRent!.Date = rent.Date;
+            var getRent = await _context!.Orders!.FindAsync(id);
+            getRent!.UpdatedAt = rent.CreatedAt;
             getRent!.ClientUserId = rent.ClientUserId;
 
             await _context.SaveChangesAsync();
@@ -348,14 +353,14 @@ namespace Blasterify.Services.Controllers
         [Route("CompleteRent")]
         public async Task<IActionResult> CompleteRent(Blasterify.Models.Model.CompleteRentRequest completeRentRequest)
         {
-            var getRent = await _context!.Rents!.FindAsync(completeRentRequest.RentId);
+            var getRent = await _context!.Orders!.FindAsync(completeRentRequest.RentId);
 
             if (getRent == null)
             {
                 return NotFound();
             }
 
-            var getRentItems = await _context!.RentItems!.Where(ri => ri.RentId == completeRentRequest.RentId).ToListAsync();
+            var getRentItems = await _context!.OrderItems!.Where(ri => ri.OrderId == completeRentRequest.RentId).ToListAsync();
             double totalPrice = 0;
 
             var titleMovies = new List<string>();
@@ -363,7 +368,7 @@ namespace Blasterify.Services.Controllers
             foreach (var item in getRentItems!)
             {
                 var getMovie = await _context.Movies!.FindAsync(item.MovieId);
-                titleMovies.Add(getMovie.Title);
+                titleMovies.Add(getMovie.Name);
             }
 
 
@@ -402,7 +407,7 @@ namespace Blasterify.Services.Controllers
                         {
                             Card_Data = new Blasterify.Models.Yuno.CardData
                             {
-                                Number = getRent.CardNumber,
+                                //Number = getRent.CardNumber,
                                 Expiration_Month = 12,
                                 Expiration_Year = 2024,
                                 Security_Code = "123",
@@ -428,7 +433,7 @@ namespace Blasterify.Services.Controllers
 
             BackgroundJob.Schedule(() => Email.FinishRent(getCustomer.Email, $"{getCustomer.First_Name} {getCustomer.Last_Name}", getRent.Id.ToString(), getRentItems, titleMovies), new DateTimeOffset(DateTime.UtcNow));
 
-            getRent!.StatusId = 1;
+            //getRent!.Status = 1;
             getRent!.IsEnabled = false;
 
             await _context.SaveChangesAsync();
@@ -440,8 +445,8 @@ namespace Blasterify.Services.Controllers
         [Route("Delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var rent = await _context!.Rents!.FindAsync(id);
-            _context.Rents.Remove(rent!);
+            var rent = await _context!.Orders!.FindAsync(id);
+            _context.Orders.Remove(rent!);
 
             await _context.SaveChangesAsync();
 

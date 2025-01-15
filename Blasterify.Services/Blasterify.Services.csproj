@@ -24,4 +24,8 @@
     <ProjectReference Include="..\Blasterify.Models\Blasterify.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

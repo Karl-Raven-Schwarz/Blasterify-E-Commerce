@@ -3,8 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Blasterify.Services.Models
 {
-    public class MovieGenre : BaseModel
+    public class OrderItem : BaseModel
     {
+        [Required]
+        [Column(TypeName = "decimal(4, 2)")]
+        public double Price { get; set; }
+
         [Required]
         public Guid MovieId { get; set; }
 
@@ -12,9 +16,9 @@ namespace Blasterify.Services.Models
         public virtual Movie? Movie { get; set; }
 
         [Required]
-        public Guid GenreId { get; set; }
+        public Guid OrderId { get; set; }
 
-        [ForeignKey(nameof(GenreId))]
-        public virtual Genre? Genre { get; set; }
+        [ForeignKey(nameof(OrderId))]
+        public virtual Order? Order { get; set; }
     }
 }

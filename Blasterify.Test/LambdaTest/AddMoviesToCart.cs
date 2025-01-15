@@ -15,7 +15,7 @@ namespace Blasterify.Test.LambdaTest
         public void SetUp()
         {
             driver = new EdgeDriver();
-            js = (IJavaScriptExecutor) driver;
+            js = (IJavaScriptExecutor)driver;
             vars = new Dictionary<string, object>();
         }
         [TearDown]
@@ -40,7 +40,7 @@ namespace Blasterify.Test.LambdaTest
             driver.FindElement(By.CssSelector(".card:nth-child(1) > .card-body > .row > .col-sm-2 .btn:nth-child(3) > .svg-inline--fa")).Click();
             {
                 var element = driver.FindElement(By.CssSelector(".card:nth-child(1) > .card-body > .row > .col-sm-2 .btn:nth-child(3) > .svg-inline--fa"));
-                Actions builder = new (driver);
+                Actions builder = new(driver);
                 builder.DoubleClick(element).Perform();
             }
             driver.FindElement(By.CssSelector(".card:nth-child(2) .btn:nth-child(3) > .svg-inline--fa")).Click();

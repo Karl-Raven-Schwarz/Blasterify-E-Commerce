@@ -65,7 +65,7 @@ namespace Blasterify.Services.Controllers
         public async Task<IActionResult> Update(int id, Movie movie)
         {
             var getMovie = await _context.Movies!.FindAsync(id);
-            getMovie!.Title = movie.Title;
+            getMovie!.Name = movie.Name;
 
             await _context.SaveChangesAsync();
 

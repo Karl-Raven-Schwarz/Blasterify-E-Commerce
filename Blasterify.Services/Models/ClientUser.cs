@@ -23,10 +23,6 @@ namespace Blasterify.Services.Models
         [Required]
         public byte[]? PasswordHash { get; set; }
 
-        [Required]
-        [StringLength(16)]
-        public string? CardNumber { get; set; }
-
         [MinLength(36)]
         [MaxLength(64)]
         public string? YunoId { get; set; }
@@ -43,7 +39,7 @@ namespace Blasterify.Services.Models
         public DateTime LastConnectionDate { get; set; }
 
         [Required]
-        public Guid CountryId  { get; set; }
+        public Guid CountryId { get; set; }
 
         [ForeignKey(nameof(CountryId))]
         public virtual Country? Country { get; set; }
