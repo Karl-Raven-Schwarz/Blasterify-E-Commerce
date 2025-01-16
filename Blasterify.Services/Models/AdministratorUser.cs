@@ -30,6 +30,27 @@ namespace Blasterify.Services.Models
         public DateTime LastConnectionDate { get; set; }
 
         [Required]
+        public int LogInAttempts { get; set; } = 0;
+
+        /// <value>value="True": User Blocked</value>
+        [Required]
+        public bool IsLocked { get; set; } = false;
+
+        [Required]
+        public DateTime UnlockDate { get; set; }
+
+        /// <remarks>Default Value = 10000000</remarks>
+        [Range(10000000, 99999999)]
+        public int VerificationCode { get; set; } = 10000000;
+
+        public bool IsVerified { get; set; } = false;
+
+        public DateTime VerificationCodeExpiration { get; set; } = DateTime.MinValue;
+
+        [Required]
+        public int ResetPasswordAttempts { get; set; } = 0;
+
+        [Required]
         public Guid CountryId { get; set; }
 
         [ForeignKey(nameof(CountryId))]
