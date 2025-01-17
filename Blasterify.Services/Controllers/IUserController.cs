@@ -22,7 +22,7 @@ namespace Blasterify.Services.Controllers
         const int MAX_RESET_PASSWORD_ATTEMPTS = 3;
 
         // Constantes para las excepciones de email ya usado
-        const string EMAIL_ALREADY_USED_EXCEPTION_MESSAGE_1 = "23505: duplicate key value violates unique constraint";
+        const string EMAIL_ALREADY_USED_EXCEPTION_MESSAGE_1 = "Cannot insert duplicate key row in object 'dbo.ClientUsers' with unique index 'IX_ClientUsers_Email'";
         const string EMAIL_ALREADY_USED_EXCEPTION_MESSAGE_2 = "IX_Users_Email";
 
         Task<ActionResult> SignUp(SignUpRequest signUpRequest);

@@ -2,7 +2,7 @@
 
 namespace Blasterify.Models.Requests
 {
-    public abstract class SignUpRequest
+    public class SignUpRequest
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

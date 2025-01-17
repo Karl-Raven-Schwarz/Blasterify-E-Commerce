@@ -1,4 +1,5 @@
-﻿using Blasterify.Models.Requests;
+﻿using Blasterify.Models.Model;
+using Blasterify.Models.Requests;
 using Blasterify.Models.Responses;
 using Blasterify.Services.Data;
 using Blasterify.Services.Models;
@@ -30,21 +31,53 @@ namespace Blasterify.Services.Controllers
         {
             try
             {
-                await _context!.ClientUsers!.AddAsync(new ClientUser()
+                var country = await _context.Countries!.FirstOrDefaultAsync(c => c.Id == signUpRequest.CountryId);
+
+                if (country == null)
                 {
-                    Id = Guid.NewGuid(),
+                    return NotFound(new { Message = "Country not found." });
+                }
+
+                var newClientUser = (await _context!.ClientUsers!.AddAsync(new ClientUser()
+                {
                     FirstName = signUpRequest.FirstName,
                     LastName = signUpRequest.LastName,
                     Email = signUpRequest.Email,
-                    PasswordHash = signUpRequest.PasswordHash
-                });
+                    PasswordHash = signUpRequest.PasswordHash,
+                    CountryId = signUpRequest.CountryId
+                })).Entity;
 
                 await _context.SaveChangesAsync();
+
+                var yunoId = await Services.YunoServices.CreateCustomer(new Blasterify.Models.Yuno.CustomerRequest()
+                {
+                    merchant_customer_id = $"{newClientUser.Id}",
+                    merchant_customer_created_at = newClientUser.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ"),
+                    first_name = newClientUser.FirstName,
+                    last_name = newClientUser.LastName,
+                    email = newClientUser.Email,
+                    created_at = newClientUser.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ"),
+                    updated_at = newClientUser.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ"),
+                });
+
+                if (Services.YunoServices.ErrorCodes.Contains(yunoId))
+                {
+                    _context.ClientUsers!.Remove(newClientUser);
+
+                    return BadRequest(new { message = "Error creating customer." });
+                }
+
+                newClientUser.YunoId = yunoId;
+                newClientUser.MerchantOrderId = $"{newClientUser.Id}";
+
+                await _context.SaveChangesAsync();
+
                 /*
                 BackgroundJob.Schedule(() =>
                     Services.EmailServices.EmailAuthenticator.WelcomeStudentEmail(signUpRequest.Email!, $"{signUpRequest.FirstName} {signUpRequest.LastName}"),
                     new DateTimeOffset(DateTime.UtcNow)
                 );
+                Message = "Cannot insert duplicate key row in object 'dbo.ClientUsers' with unique index 'IX_ClientUsers_Email'. The duplicate key value is (lmessi@blasterify.com).\r\nThe statement has been terminated."
                 */
                 return Ok();
             }
@@ -53,7 +86,7 @@ namespace Blasterify.Services.Controllers
                 if (
                     ex.InnerException != null
                     && ex.InnerException.Message.Contains(IUserController.EMAIL_ALREADY_USED_EXCEPTION_MESSAGE_1)
-                    && ex.InnerException.Message.Contains(IUserController.EMAIL_ALREADY_USED_EXCEPTION_MESSAGE_2)
+                    //&& ex.InnerException.Message.Contains(IUserController.EMAIL_ALREADY_USED_EXCEPTION_MESSAGE_2)
                 )
                 {
                     return Conflict(new { message = "Email already used." });

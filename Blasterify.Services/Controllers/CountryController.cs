@@ -1,4 +1,5 @@
-﻿using Blasterify.Services.Data;
+﻿using Blasterify.Models.Requests;
+using Blasterify.Services.Data;
 using Blasterify.Services.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +19,16 @@ namespace Blasterify.Services.Controllers
 
         [HttpPost]
         [Route("Create")]
-        public async Task<IActionResult> Create(Country country)
+        public async Task<IActionResult> Create(CountryRequest countryRequest)
         {
-            await _context.Countries!.AddAsync(country);
+            var newCountry = await _context.Countries!.AddAsync(new Country
+            {
+                Name = countryRequest.Name,
+                Code = countryRequest.Code,
+            });
+
             await _context.SaveChangesAsync();
-            return Ok();
+            return Ok(new { data = newCountry.Entity });
         }
 
         [HttpGet]
