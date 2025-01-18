@@ -85,14 +85,13 @@ namespace Blasterify.Services.Controllers
             {
                 if (
                     ex.InnerException != null
-                    && ex.InnerException.Message.Contains(IUserController.EMAIL_ALREADY_USED_EXCEPTION_MESSAGE_1)
-                    //&& ex.InnerException.Message.Contains(IUserController.EMAIL_ALREADY_USED_EXCEPTION_MESSAGE_2)
+                    && ex.InnerException.Message.Contains(IUserController.EMAIL_ALREADY_USED_EXCEPTION_MESSAGE)
                 )
                 {
                     return Conflict(new { message = "Email already used." });
                 }
 
-                return BadRequest(ex.ToString());
+                return BadRequest(new { message = ex.InnerException?.Message ?? ex.Message });
             }
         }
 
@@ -110,6 +109,11 @@ namespace Blasterify.Services.Controllers
                 }
                 else
                 {
+                    if (!student.IsVerified)
+                    {
+                        return Unauthorized(new { message = "Account not verified." });
+                    }
+
                     if (logInRequest.PasswordHash == null || logInRequest.PasswordHash.Length == 0)
                     {
                         return BadRequest(new { message = "Password is required." });
@@ -330,46 +334,6 @@ namespace Blasterify.Services.Controllers
 
         #endregion
 
-        // Error - MERCHAT ORDER ID
-        [HttpPost]
-        [Route("Create")]
-        public async Task<IActionResult> Create(Blasterify.Models.Model.ClientUserModel clientUserModel)
-        {
-            var createClientUser = await _context!.ClientUsers!.AddAsync(new ClientUser()
-            {
-                FirstName = clientUserModel.FirstName,
-                LastName = clientUserModel.LastName,
-                Email = clientUserModel.Email,
-                PasswordHash = clientUserModel.PasswordHash,
-                MerchantOrderId = string.Empty
-            });
-
-            await _context.SaveChangesAsync();
-
-            var yunoId = await Services.YunoServices.CreateCustomer(new Blasterify.Models.Yuno.CustomerRequest()
-            {
-                merchant_customer_id = $"{createClientUser.Entity.Id}",
-                merchant_customer_created_at = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ"),
-                first_name = clientUserModel.FirstName,
-                last_name = clientUserModel.LastName,
-                email = clientUserModel.Email,
-                created_at = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ"),
-                updated_at = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ")
-            });
-
-            if (Services.YunoServices.ErrorCodes.Contains(yunoId))
-            {
-                return BadRequest();
-            }
-
-            createClientUser.Entity.YunoId = yunoId;
-            createClientUser.Entity.MerchantOrderId = $"{createClientUser.Entity.Id}";
-
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
         [HttpGet]
         [Route("GetAll")]
         public async Task<ActionResult<IEnumerable<ClientUser>>> GetAll()
@@ -390,51 +354,6 @@ namespace Blasterify.Services.Controllers
             }
 
             return Ok(clientUser);
-        }
-
-        [HttpPost]
-        [Route("LogIn1")]
-        public async Task<ActionResult<ClientUser>> LogIn1(LogInRequest logInRequest)
-        {
-            try
-            {
-                var clientUser = await _context!.ClientUsers!.FirstOrDefaultAsync(cu => cu.Email == logInRequest.Email);
-
-                if (clientUser == null)
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    using (SHA256 sha256Hash = SHA256.Create())
-                    {
-                        byte[] bytes = logInRequest.PasswordHash!;
-                        for (int i = 0; i < bytes.Length; i++)
-                        {
-                            if (bytes[i] != clientUser.PasswordHash![i])
-                            {
-                                return Unauthorized();
-                            }
-                        }
-                    }
-
-                    return Ok(new ClientUser
-                    {
-                        Id = clientUser.Id,
-                        FirstName = clientUser.FirstName,
-                        LastName = clientUser.LastName,
-                        Email = clientUser.Email,
-                        IsConnected = true,
-                        LastConnectionDate = DateTime.UtcNow
-
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                return NotFound();
-            }
         }
 
         [HttpPut]

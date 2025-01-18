@@ -1,4 +1,5 @@
 ﻿using Blasterify.Client.Models;
+using Blasterify.Models.Requests;
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;
@@ -9,7 +10,7 @@ using System.Web.Mvc;
 
 namespace Blasterify.Client.Controllers
 {
-    public class AccessController : BaseController
+    public class AccessController : Controller
     {
         private static readonly HttpClient client = new HttpClient();
 
@@ -101,6 +102,8 @@ namespace Blasterify.Client.Controllers
         #endregion
 
         #region VIEWS
+
+        [HttpGet]
         public ActionResult LogIn()
         {
             Console.WriteLine(MvcApplication.ServicesPath);
@@ -110,7 +113,7 @@ namespace Blasterify.Client.Controllers
             }
             else
             {
-                return View();
+                return View(new LogIn());
             }
         }
 
@@ -166,15 +169,10 @@ namespace Blasterify.Client.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> LogInRequest(string email, string password)
+        public async Task<ActionResult> LogInRequest(LogIn model)
         {
-            var logIn = new LogIn()
-            {
-                Email = email,
-                PasswordHash = HashPassword(password)
-            };
-
-            var islogged = await LogInAsync(logIn);
+            //var islogged = await LogInAsync(logIn);
+            var islogged = model.Password.Length > 6;
 
             if (islogged)
             {
@@ -182,7 +180,7 @@ namespace Blasterify.Client.Controllers
             }
             else
             {
-                return View();
+                return View("_LogInPartial", model);
             }
         }
 

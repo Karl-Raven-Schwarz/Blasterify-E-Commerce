@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blasterify.Models", "Blaste
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blasterify.Test", "Blasterify.Test\Blasterify.Test.csproj", "{5C844971-5079-4B60-B2E6-1D29495EBC73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blasterify.Yuno", "Blasterify.Yuno\Blasterify.Yuno.csproj", "{A7B8E0D2-9380-45D7-920B-672EE245DF7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blasterify.Yuno", "Blasterify.Yuno\Blasterify.Yuno.csproj", "{A7B8E0D2-9380-45D7-920B-672EE245DF7A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

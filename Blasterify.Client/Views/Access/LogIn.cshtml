@@ -1,5 +1,7 @@
-﻿@{
+﻿@model Blasterify.Client.Models.LogIn
+@{
     Layout = null;
+    ViewBag.Title = "LogIn";
 }
 
 <!DOCTYPE html>
@@ -20,6 +22,7 @@
 </head>
 
 <body class="bg-black">
+    <div> @Html.Partial("_LogInPartial") </div>
     <div id="layoutAuthentication">
         <div id="layoutAuthentication_content">
             <main>
